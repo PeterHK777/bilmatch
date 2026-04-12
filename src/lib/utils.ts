@@ -44,5 +44,7 @@ export function cn(...classes: (string | boolean | undefined | null)[]): string 
 }
 
 export function getImagePlaceholder(make: string): string {
-  return `https://placehold.co/800x600/e5e7eb/6b7280?text=${encodeURIComponent(make)}`;
+  const placeholders = ["/cars/sedan-blue.svg", "/cars/suv-dark.svg", "/cars/hatchback-red.svg", "/cars/coupe-black.svg"];
+  const index = make.length % placeholders.length;
+  return placeholders[index];
 }

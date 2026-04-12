@@ -24,6 +24,51 @@ function randomInt(min: number, max: number): number {
   return Math.floor(rand() * (max - min + 1)) + min;
 }
 
+// Car images mapped by body type and color
+const carImages: Record<string, string[]> = {
+  SEDAN: ["/cars/sedan-dark.svg", "/cars/sedan-light.svg", "/cars/sedan-blue.svg", "/cars/sedan-red.svg"],
+  SUV: ["/cars/suv-dark.svg", "/cars/suv-silver.svg", "/cars/suv-white.svg", "/cars/suv-green.svg"],
+  HATCHBACK: ["/cars/hatchback-red.svg", "/cars/hatchback-blue.svg", "/cars/hatchback-white.svg"],
+  MIKRO: ["/cars/hatchback-red.svg", "/cars/hatchback-blue.svg", "/cars/hatchback-white.svg"],
+  COUPE: ["/cars/coupe-black.svg", "/cars/coupe-red.svg"],
+  CABRIOLET: ["/cars/coupe-black.svg", "/cars/coupe-red.svg"],
+  STATIONCAR: ["/cars/wagon-gray.svg", "/cars/wagon-blue.svg"],
+  MPV: ["/cars/suv-silver.svg", "/cars/suv-white.svg", "/cars/wagon-gray.svg"],
+  CUV: ["/cars/suv-dark.svg", "/cars/suv-green.svg"],
+};
+
+const colorToImage: Record<string, string> = {
+  Sort: "dark", Hvid: "white", Sølv: "silver", Grå: "gray", Blå: "blue",
+  Rød: "red", Grøn: "green", Antracit: "dark",
+};
+
+function getCarImage(bodyType: string, color: string): string {
+  const images = carImages[bodyType] || carImages.SEDAN;
+  // Try to match color
+  const colorKey = colorToImage[color];
+  if (colorKey) {
+    const match = images.find((img) => img.includes(colorKey));
+    if (match) return match;
+  }
+  return images[Math.floor(Math.abs(bodyType.length + color.length) % images.length)];
+}
+
+function getInteriorImage(bodyType: string): string {
+  const interiors = ["/cars/sedan-dark.svg", "/cars/suv-dark.svg", "/cars/coupe-black.svg"];
+  return interiors[Math.abs(bodyType.length) % interiors.length];
+}
+
+function getRearImage(bodyType: string): string {
+  const rears: Record<string, string> = {
+    SEDAN: "/cars/sedan-light.svg",
+    SUV: "/cars/suv-silver.svg",
+    HATCHBACK: "/cars/hatchback-white.svg",
+    COUPE: "/cars/coupe-red.svg",
+    STATIONCAR: "/cars/wagon-blue.svg",
+  };
+  return rears[bodyType] || "/cars/sedan-light.svg";
+}
+
 const fuelTypes = ["BENZIN", "DIESEL", "EL", "HYBRID", "PLUGIN_HYBRID"] as const;
 const bodyTypes = ["SEDAN", "STATIONCAR", "SUV", "COUPE", "CABRIOLET", "MPV", "HATCHBACK"] as const;
 const transmissions = ["MANUAL", "AUTOMATIC"] as const;
@@ -197,9 +242,9 @@ for (let i = 0; i < 250; i++) {
     packageTier: tier,
     createdAt,
     images: [
-      { url: `https://placehold.co/800x600/0054a6/ffffff?text=${encodeURIComponent(`${make} ${model}`)}`, sortOrder: 0 },
-      { url: `https://placehold.co/800x600/333333/ffffff?text=${encodeURIComponent(`${make} Interiør`)}`, sortOrder: 1 },
-      { url: `https://placehold.co/800x600/28a745/ffffff?text=${encodeURIComponent(`${make} Bag`)}`, sortOrder: 2 },
+      { url: getCarImage(bodyType, color), sortOrder: 0 },
+      { url: getInteriorImage(bodyType), sortOrder: 1 },
+      { url: getRearImage(bodyType), sortOrder: 2 },
     ],
     equipment,
     dealershipName: isDealer ? user.dealership!.companyName : null,

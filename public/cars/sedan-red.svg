@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a1818"/>
+      <stop offset="60%" stop-color="#2a1010"/>
+      <stop offset="100%" stop-color="#1a0a0a"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a0e0e"/>
+      <stop offset="100%" stop-color="#100808"/>
+    </linearGradient>
+    <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#cc2020"/>
+      <stop offset="40%" stop-color="#a01818"/>
+      <stop offset="100%" stop-color="#801010"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5a4050"/>
+      <stop offset="100%" stop-color="#3a2838"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.5)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#888"/>
+      <stop offset="100%" stop-color="#555"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect x="0" y="420" width="800" height="180" fill="url(#ground)"/>
+  <line x1="0" y1="420" x2="800" y2="420" stroke="#2a1515" stroke-width="1"/>
+  <ellipse cx="400" cy="425" rx="280" ry="18" fill="url(#shadow)"/>
+  <path d="M140,380 L140,350 L180,350 L210,310 L280,270 L340,255 L420,250 L480,252 L530,260 L560,275 L580,295 L620,310 L660,330 L670,350 L670,380 L650,395 L620,400 L590,400 L570,395 L530,395 L290,395 L260,395 L230,400 L200,400 L170,395 L140,395 Z" fill="url(#carBody)" stroke="#dd3030" stroke-width="0.5"/>
+  <path d="M160,355 L280,340 L500,335 L650,350" fill="none" stroke="#bb2020" stroke-width="1" opacity="0.6"/>
+  <path d="M145,380 L155,365 L250,358 L550,355 L660,365 L665,380" fill="none" stroke="#901515" stroke-width="1.5"/>
+  <path d="M218,308 L270,275 L340,260 L390,257 L390,305 L230,320 Z" fill="url(#glass)" stroke="#6a3535" stroke-width="0.5" opacity="0.9"/>
+  <path d="M400,257 L470,258 L530,268 L555,280 L575,300 L575,315 L400,305 Z" fill="url(#glass)" stroke="#6a3535" stroke-width="0.5" opacity="0.9"/>
+  <line x1="395" y1="255" x2="395" y2="308" stroke="#801010" stroke-width="3"/>
+  <path d="M650,340 L668,345 L668,365 L650,370 Z" fill="#e8e8b0" opacity="0.7"/>
+  <path d="M145,350 L155,348 L155,375 L145,378 Z" fill="#ff3030" opacity="0.9"/>
+  <g transform="translate(555, 395)">
+    <circle cx="0" cy="0" r="38" fill="#111"/>
+    <circle cx="0" cy="0" r="32" fill="url(#rim)"/>
+    <circle cx="0" cy="0" r="28" fill="#222"/>
+    <line x1="0" y1="-24" x2="0" y2="24" stroke="#777" stroke-width="3"/>
+    <line x1="-24" y1="0" x2="24" y2="0" stroke="#777" stroke-width="3"/>
+    <line x1="-17" y1="-17" x2="17" y2="17" stroke="#777" stroke-width="3"/>
+    <line x1="17" y1="-17" x2="-17" y2="17" stroke="#777" stroke-width="3"/>
+    <circle cx="0" cy="0" r="8" fill="#666"/>
+    <circle cx="0" cy="0" r="4" fill="#444"/>
+  </g>
+  <g transform="translate(220, 395)">
+    <circle cx="0" cy="0" r="38" fill="#111"/>
+    <circle cx="0" cy="0" r="32" fill="url(#rim)"/>
+    <circle cx="0" cy="0" r="28" fill="#222"/>
+    <line x1="0" y1="-24" x2="0" y2="24" stroke="#777" stroke-width="3"/>
+    <line x1="-24" y1="0" x2="24" y2="0" stroke="#777" stroke-width="3"/>
+    <line x1="-17" y1="-17" x2="17" y2="17" stroke="#777" stroke-width="3"/>
+    <line x1="17" y1="-17" x2="-17" y2="17" stroke="#777" stroke-width="3"/>
+    <circle cx="0" cy="0" r="8" fill="#666"/>
+    <circle cx="0" cy="0" r="4" fill="#444"/>
+  </g>
+  <rect x="350" y="325" width="25" height="4" rx="2" fill="#cc3030"/>
+  <path d="M575,300 L590,295 L592,305 L578,308 Z" fill="#a01818" stroke="#cc2020" stroke-width="0.5"/>
+</svg>

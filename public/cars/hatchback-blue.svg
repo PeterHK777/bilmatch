@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a2540"/>
+      <stop offset="60%" stop-color="#141d35"/>
+      <stop offset="100%" stop-color="#0e1528"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#101825"/>
+      <stop offset="100%" stop-color="#0a101a"/>
+    </linearGradient>
+    <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3878cc"/>
+      <stop offset="40%" stop-color="#2a60b0"/>
+      <stop offset="100%" stop-color="#1e4890"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5580a8"/>
+      <stop offset="100%" stop-color="#304860"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.5)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#888"/>
+      <stop offset="100%" stop-color="#555"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect x="0" y="420" width="800" height="180" fill="url(#ground)"/>
+  <line x1="0" y1="420" x2="800" y2="420" stroke="#182038" stroke-width="1"/>
+  <ellipse cx="400" cy="425" rx="260" ry="16" fill="url(#shadow)"/>
+  <!-- Hatchback body -->
+  <path d="M170,385 L170,350 L185,340 L200,325 L220,295 L280,268 L340,258 L420,255 L490,258 L540,268 L570,285 L600,305 L630,325 L650,345 L655,360 L655,385 L640,398 L615,402 L590,402 L570,398 L530,398 L280,398 L250,398 L225,402 L200,402 L175,398 Z" fill="url(#carBody)" stroke="#4888dd" stroke-width="0.5"/>
+  <path d="M190,360 L300,348 L500,344 L642,355" fill="none" stroke="#3570b8" stroke-width="1" opacity="0.6"/>
+  <path d="M175,385 L188,370 L270,364 L530,362 L648,370 L652,385" fill="none" stroke="#1e4890" stroke-width="1.5"/>
+  <path d="M228,293 L280,272 L340,264 L395,262 L395,310 L210,328 Z" fill="url(#glass)" stroke="#4878a0" stroke-width="0.5" opacity="0.9"/>
+  <path d="M405,262 L490,264 L538,274 L568,290 L595,310 L595,330 L405,310 Z" fill="url(#glass)" stroke="#4878a0" stroke-width="0.5" opacity="0.9"/>
+  <line x1="400" y1="260" x2="400" y2="312" stroke="#1e4890" stroke-width="3"/>
+  <path d="M175,350 L200,325 L220,295" fill="none" stroke="#2a60b0" stroke-width="1"/>
+  <path d="M638,340 L654,344 L654,362 L638,366 Z" fill="#e8e8b0" opacity="0.7"/>
+  <path d="M172,342 L186,338 L186,372 L172,376 Z" fill="#cc2020" opacity="0.8"/>
+  <g transform="translate(555, 398)">
+    <circle cx="0" cy="0" r="36" fill="#111"/>
+    <circle cx="0" cy="0" r="30" fill="url(#rim)"/>
+    <circle cx="0" cy="0" r="26" fill="#222"/>
+    <line x1="0" y1="-22" x2="0" y2="22" stroke="#777" stroke-width="3"/>
+    <line x1="-22" y1="0" x2="22" y2="0" stroke="#777" stroke-width="3"/>
+    <line x1="-15" y1="-15" x2="15" y2="15" stroke="#777" stroke-width="3"/>
+    <line x1="15" y1="-15" x2="-15" y2="15" stroke="#777" stroke-width="3"/>
+    <circle cx="0" cy="0" r="8" fill="#666"/>
+    <circle cx="0" cy="0" r="4" fill="#444"/>
+  </g>
+  <g transform="translate(230, 398)">
+    <circle cx="0" cy="0" r="36" fill="#111"/>
+    <circle cx="0" cy="0" r="30" fill="url(#rim)"/>
+    <circle cx="0" cy="0" r="26" fill="#222"/>
+    <line x1="0" y1="-22" x2="0" y2="22" stroke="#777" stroke-width="3"/>
+    <line x1="-22" y1="0" x2="22" y2="0" stroke="#777" stroke-width="3"/>
+    <line x1="-15" y1="-15" x2="15" y2="15" stroke="#777" stroke-width="3"/>
+    <line x1="15" y1="-15" x2="-15" y2="15" stroke="#777" stroke-width="3"/>
+    <circle cx="0" cy="0" r="8" fill="#666"/>
+    <circle cx="0" cy="0" r="4" fill="#444"/>
+  </g>
+  <rect x="360" y="330" width="22" height="4" rx="2" fill="#4888dd"/>
+  <path d="M595,310 L612,305 L614,316 L598,320 Z" fill="#2a60b0" stroke="#3878cc" stroke-width="0.5"/>
+</svg>

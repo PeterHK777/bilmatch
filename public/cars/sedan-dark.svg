@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2a2a2a"/>
+      <stop offset="60%" stop-color="#1a1a1a"/>
+      <stop offset="100%" stop-color="#111111"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#181818"/>
+      <stop offset="100%" stop-color="#0d0d0d"/>
+    </linearGradient>
+    <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a3a3a"/>
+      <stop offset="50%" stop-color="#252525"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a5568"/>
+      <stop offset="100%" stop-color="#2d3748"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.5)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#555"/>
+      <stop offset="100%" stop-color="#333"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <!-- Ground plane -->
+  <rect x="0" y="420" width="800" height="180" fill="url(#ground)"/>
+  <line x1="0" y1="420" x2="800" y2="420" stroke="#2a2a2a" stroke-width="1"/>
+  <!-- Ground shadow -->
+  <ellipse cx="400" cy="425" rx="280" ry="18" fill="url(#shadow)"/>
+  <!-- Car body - Sedan -->
+  <path d="M140,380 L140,350 L180,350 L210,310 L280,270 L340,255 L420,250 L480,252 L530,260 L560,275 L580,295 L620,310 L660,330 L670,350 L670,380 L650,395 L620,400 L590,400 L570,395 L530,395 L290,395 L260,395 L230,400 L200,400 L170,395 L140,395 Z" fill="url(#carBody)" stroke="#444" stroke-width="0.5"/>
+  <!-- Body line -->
+  <path d="M160,355 L280,340 L500,335 L650,350" fill="none" stroke="#444" stroke-width="1"/>
+  <!-- Lower body accent -->
+  <path d="M145,380 L155,365 L250,358 L550,355 L660,365 L665,380" fill="none" stroke="#333" stroke-width="1.5"/>
+  <!-- Rear window -->
+  <path d="M218,308 L270,275 L340,260 L390,257 L390,305 L230,320 Z" fill="url(#glass)" stroke="#555" stroke-width="0.5" opacity="0.9"/>
+  <!-- Front window -->
+  <path d="M400,257 L470,258 L530,268 L555,280 L575,300 L575,315 L400,305 Z" fill="url(#glass)" stroke="#555" stroke-width="0.5" opacity="0.9"/>
+  <!-- Window divider -->
+  <line x1="395" y1="255" x2="395" y2="308" stroke="#333" stroke-width="3"/>
+  <!-- Headlight -->
+  <path d="M650,340 L668,345 L668,365 L650,370 Z" fill="#e8e8a0" opacity="0.7"/>
+  <!-- Taillight -->
+  <path d="M145,350 L155,348 L155,375 L145,378 Z" fill="#cc2020" opacity="0.8"/>
+  <!-- Front wheel -->
+  <g transform="translate(555, 395)">
+    <circle cx="0" cy="0" r="38" fill="#111"/>
+    <circle cx="0" cy="0" r="32" fill="url(#rim)"/>
+    <circle cx="0" cy="0" r="28" fill="#222"/>
+    <!-- Alloy spokes -->
+    <line x1="0" y1="-24" x2="0" y2="24" stroke="#555" stroke-width="3"/>
+    <line x1="-24" y1="0" x2="24" y2="0" stroke="#555" stroke-width="3"/>
+    <line x1="-17" y1="-17" x2="17" y2="17" stroke="#555" stroke-width="3"/>
+    <line x1="17" y1="-17" x2="-17" y2="17" stroke="#555" stroke-width="3"/>
+    <circle cx="0" cy="0" r="8" fill="#444"/>
+    <circle cx="0" cy="0" r="4" fill="#333"/>
+  </g>
+  <!-- Rear wheel -->
+  <g transform="translate(220, 395)">
+    <circle cx="0" cy="0" r="38" fill="#111"/>
+    <circle cx="0" cy="0" r="32" fill="url(#rim)"/>
+    <circle cx="0" cy="0" r="28" fill="#222"/>
+    <line x1="0" y1="-24" x2="0" y2="24" stroke="#555" stroke-width="3"/>
+    <line x1="-24" y1="0" x2="24" y2="0" stroke="#555" stroke-width="3"/>
+    <line x1="-17" y1="-17" x2="17" y2="17" stroke="#555" stroke-width="3"/>
+    <line x1="17" y1="-17" x2="-17" y2="17" stroke="#555" stroke-width="3"/>
+    <circle cx="0" cy="0" r="8" fill="#444"/>
+    <circle cx="0" cy="0" r="4" fill="#333"/>
+  </g>
+  <!-- Door handle -->
+  <rect x="350" y="325" width="25" height="4" rx="2" fill="#555"/>
+  <!-- Mirror -->
+  <path d="M575,300 L590,295 L592,305 L578,308 Z" fill="#2a2a2a" stroke="#444" stroke-width="0.5"/>
+</svg>

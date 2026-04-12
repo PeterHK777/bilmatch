@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#484848"/>
+      <stop offset="60%" stop-color="#383838"/>
+      <stop offset="100%" stop-color="#282828"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#252525"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </linearGradient>
+    <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#808888"/>
+      <stop offset="40%" stop-color="#687070"/>
+      <stop offset="100%" stop-color="#505858"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#607888"/>
+      <stop offset="100%" stop-color="#405060"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.4)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#999"/>
+      <stop offset="100%" stop-color="#555"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect x="0" y="420" width="800" height="180" fill="url(#ground)"/>
+  <line x1="0" y1="420" x2="800" y2="420" stroke="#333" stroke-width="1"/>
+  <ellipse cx="400" cy="425" rx="290" ry="17" fill="url(#shadow)"/>
+  <!-- Station wagon body - long roof, flat rear -->
+  <path d="M120,385 L120,340 L130,330 L140,318 L145,308 L150,280 L180,265 L220,258 L280,254 L420,252 L510,254 L560,262 L590,280 L620,300 L650,320 L665,340 L675,355 L675,385 L658,398 L630,402 L608,402 L588,398 L545,398 L270,398 L240,398 L215,402 L190,402 L162,398 L120,398 Z" fill="url(#carBody)" stroke="#90989a" stroke-width="0.5"/>
+  <!-- Body line -->
+  <path d="M138,360 L280,348 L520,344 L660,355" fill="none" stroke="#78807a" stroke-width="1"/>
+  <!-- Lower accent -->
+  <path d="M125,385 L140,370 L260,364 L540,362 L665,370 L672,385" fill="none" stroke="#586060" stroke-width="1.5"/>
+  <!-- Extended roof line - flat and long for wagon -->
+  <path d="M150,280 L155,262 L165,258 L510,254 L555,260" fill="none" stroke="#909898" stroke-width="0.8" opacity="0.5"/>
+  <!-- Rear window - vertical/near-vertical for wagon -->
+  <path d="M153,278 L165,262 L220,258 L280,256 L340,254 L340,296 L160,308 Z" fill="url(#glass)" stroke="#708080" stroke-width="0.5" opacity="0.9"/>
+  <!-- Middle window -->
+  <path d="M348,254 L430,253 L430,300 L348,296 Z" fill="url(#glass)" stroke="#708080" stroke-width="0.5" opacity="0.9"/>
+  <!-- Front window -->
+  <path d="M438,253 L510,256 L558,266 L588,284 L615,305 L615,325 L438,300 Z" fill="url(#glass)" stroke="#708080" stroke-width="0.5" opacity="0.9"/>
+  <!-- Window dividers -->
+  <line x1="344" y1="253" x2="344" y2="298" stroke="#586060" stroke-width="3"/>
+  <line x1="434" y1="252" x2="434" y2="300" stroke="#586060" stroke-width="3"/>
+  <!-- Rear vertical line (wagon hatch) -->
+  <path d="M125,340 L140,318 L145,308 L150,280" fill="none" stroke="#78807a" stroke-width="1.2"/>
+  <!-- Headlight -->
+  <path d="M655,335 L673,340 L673,358 L655,362 Z" fill="#e8e8a0" opacity="0.7"/>
+  <!-- Taillight - vertical for wagon -->
+  <path d="M123,332 L135,328 L135,370 L123,374 Z" fill="#cc2020" opacity="0.8"/>
+  <!-- Roof rails -->
+  <path d="M165,254 L520,252" fill="none" stroke="#a0a8a0" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Front wheel -->
+  <g transform="translate(570, 398)">
+    <circle cx="0" cy="0" r="37" fill="#111"/>
+    <circle cx="0" cy="0" r="31" fill="url(#rim)"/>
+    <circle cx="0" cy="0" r="27" fill="#2a2a2a"/>
+    <line x1="0" y1="-23" x2="0" y2="23" stroke="#777" stroke-width="3"/>
+    <line x1="-23" y1="0" x2="23" y2="0" stroke="#777" stroke-width="3"/>
+    <line x1="-16" y1="-16" x2="16" y2="16" stroke="#777" stroke-width="3"/>
+    <line x1="16" y1="-16" x2="-16" y2="16" stroke="#777" stroke-width="3"/>
+    <circle cx="0" cy="0" r="8" fill="#666"/>
+    <circle cx="0" cy="0" r="4" fill="#444"/>
+  </g>
+  <!-- Rear wheel -->
+  <g transform="translate(218, 398)">
+    <circle cx="0" cy="0" r="37" fill="#111"/>
+    <circle cx="0" cy="0" r="31" fill="url(#rim)"/>
+    <circle cx="0" cy="0" r="27" fill="#2a2a2a"/>
+    <line x1="0" y1="-23" x2="0" y2="23" stroke="#777" stroke-width="3"/>
+    <line x1="-23" y1="0" x2="23" y2="0" stroke="#777" stroke-width="3"/>
+    <line x1="-16" y1="-16" x2="16" y2="16" stroke="#777" stroke-width="3"/>
+    <line x1="16" y1="-16" x2="-16" y2="16" stroke="#777" stroke-width="3"/>
+    <circle cx="0" cy="0" r="8" fill="#666"/>
+    <circle cx="0" cy="0" r="4" fill="#444"/>
+  </g>
+  <rect x="370" y="325" width="25" height="4" rx="2" fill="#90989a"/>
+  <path d="M615,305 L632,298 L634,310 L618,315 Z" fill="#687070" stroke="#808888" stroke-width="0.5"/>
+</svg>

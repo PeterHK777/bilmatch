@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#351515"/>
+      <stop offset="60%" stop-color="#280e0e"/>
+      <stop offset="100%" stop-color="#1a0808"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#160808"/>
+      <stop offset="100%" stop-color="#0e0505"/>
+    </linearGradient>
+    <linearGradient id="carBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#e02828"/>
+      <stop offset="30%" stop-color="#c01e1e"/>
+      <stop offset="100%" stop-color="#901212"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#5a3840"/>
+      <stop offset="100%" stop-color="#382228"/>
+    </linearGradient>
+    <radialGradient id="shadow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="rgba(0,0,0,0.5)"/>
+      <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#888"/>
+      <stop offset="100%" stop-color="#444"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <rect x="0" y="420" width="800" height="180" fill="url(#ground)"/>
+  <line x1="0" y1="420" x2="800" y2="420" stroke="#221010" stroke-width="1"/>
+  <ellipse cx="400" cy="425" rx="280" ry="16" fill="url(#shadow)"/>
+  <!-- Coupe body - low, sleek, sporty -->
+  <path d="M135,388 L135,355 L150,348 L168,340 L190,328 L230,298 L310,272 L380,264 L450,262 L520,265 L570,278 L610,300 L640,320 L660,340 L672,355 L675,370 L675,388 L658,400 L630,404 L605,404 L585,400 L545,400 L275,400 L245,400 L218,404 L192,404 L165,400 L135,400 Z" fill="url(#carBody)" stroke="#ee3535" stroke-width="0.5"/>
+  <path d="M152,365 L290,352 L510,348 L660,358" fill="none" stroke="#cc2525" stroke-width="1.2" opacity="0.5"/>
+  <path d="M140,388 L155,372 L265,366 L540,364 L665,372 L672,388" fill="none" stroke="#801515" stroke-width="1.5"/>
+  <path d="M660,362 L672,358 L672,378 L660,380 Z" fill="#801212" stroke="#aa1818" stroke-width="0.5"/>
+  <path d="M240,296 L310,276 L380,268 L410,266 L410,315 L235,330 Z" fill="url(#glass)" stroke="#7a3030" stroke-width="0.5" opacity="0.9"/>
+  <path d="M420,266 L520,270 L568,282 L608,305 L635,325 L635,342 L420,315 Z" fill="url(#glass)" stroke="#7a3030" stroke-width="0.5" opacity="0.9"/>
+  <line x1="415" y1="264" x2="415" y2="316" stroke="#901212" stroke-width="3"/>
+  <path d="M652,338 L672,342 L672,358 L655,362 Z" fill="#e8e8a0" opacity="0.7"/>
+  <path d="M138,350 L150,346 L150,376 L138,380 Z" fill="#ff2020" opacity="0.9"/>
+  <path d="M140,348 L155,342 L168,340" fill="none" stroke="#aa1818" stroke-width="2"/>
+  <g transform="translate(570, 400)">
+    <circle cx="0" cy="0" r="38" fill="#111"/>
+    <circle cx="0" cy="0" r="33" fill="url(#rim)"/>
+    <circle cx="0" cy="0" r="28" fill="#1a1a1a"/>
+    <path d="M0,-24 L6,-6 L24,-8 L10,4 L16,22 L0,12 L-16,22 L-10,4 L-24,-8 L-6,-6 Z" fill="#444" stroke="#555" stroke-width="0.5"/>
+    <circle cx="0" cy="0" r="8" fill="#555"/>
+    <circle cx="0" cy="0" r="4" fill="#333"/>
+  </g>
+  <g transform="translate(225, 400)">
+    <circle cx="0" cy="0" r="38" fill="#111"/>
+    <circle cx="0" cy="0" r="33" fill="url(#rim)"/>
+    <circle cx="0" cy="0" r="28" fill="#1a1a1a"/>
+    <path d="M0,-24 L6,-6 L24,-8 L10,4 L16,22 L0,12 L-16,22 L-10,4 L-24,-8 L-6,-6 Z" fill="#444" stroke="#555" stroke-width="0.5"/>
+    <circle cx="0" cy="0" r="8" fill="#555"/>
+    <circle cx="0" cy="0" r="4" fill="#333"/>
+  </g>
+  <rect x="360" y="332" width="22" height="3" rx="1.5" fill="#ee3535"/>
+  <path d="M635,325 L652,318 L654,330 L638,335 Z" fill="#c01e1e" stroke="#e02828" stroke-width="0.5"/>
+</svg>
