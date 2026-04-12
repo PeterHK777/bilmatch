@@ -1,0 +1,270 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Enums
+enum Role {
+  PRIVATE
+  DEALER
+  ADMIN
+}
+
+enum ListingStatus {
+  DRAFT
+  ACTIVE
+  EXPIRED
+  SOLD
+  DELETED
+}
+
+enum PackageTier {
+  BASIS
+  PLUS
+  PREMIUM
+}
+
+enum VehicleCategory {
+  PERSONBIL
+  VAREBIL_INKL_MOMS
+  VAREBIL_EKSKL_MOMS
+  AUTOCAMPER
+  BUS
+  LASTBIL
+}
+
+enum BodyType {
+  SEDAN
+  STATIONCAR
+  SUV
+  COUPE
+  CABRIOLET
+  MPV
+  MIKRO
+  HATCHBACK
+  CUV
+}
+
+enum FuelType {
+  BENZIN
+  DIESEL
+  EL
+  HYBRID
+  PLUGIN_HYBRID
+  BRINT
+}
+
+enum Transmission {
+  MANUAL
+  AUTOMATIC
+}
+
+enum PriceType {
+  RETAIL
+  LEASING
+}
+
+enum LeasingAudience {
+  PRIVATE
+  BUSINESS
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  passwordHash  String?
+  name          String
+  phone         String?
+  address       String?
+  zipCode       String?
+  city          String?
+  role          Role      @default(PRIVATE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  listings      Listing[]
+  favorites     Favorite[]
+  savedSearches SavedSearch[]
+  sentMessages  Message[] @relation("SentMessages")
+  reviews       Review[]
+  dealership    Dealership?
+}
+
+model Dealership {
+  id           String    @id @default(cuid())
+  userId       String    @unique
+  user         User      @relation(fields: [userId], references: [id])
+  companyName  String
+  cvr          String    @unique
+  logo         String?
+  description  String?
+  website      String?
+  openingHours Json?
+  latitude     Float?
+  longitude    Float?
+  createdAt    DateTime  @default(now())
+  listings     Listing[]
+  reviews      Review[]
+}
+
+model Listing {
+  id              String          @id @default(cuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  dealershipId    String?
+  dealership      Dealership?     @relation(fields: [dealershipId], references: [id])
+  status          ListingStatus   @default(ACTIVE)
+  packageTier     PackageTier     @default(BASIS)
+
+  // Vehicle data
+  category        VehicleCategory
+  make            String
+  model           String
+  variant         String?
+  year            Int
+  firstRegistered DateTime?
+  mileage         Int
+  bodyType        BodyType?
+  fuelType        FuelType
+  engineSize      Float?
+  horsepower      Int?
+  transmission    Transmission
+  doors           Int?
+  color           String?
+  owners          Int?
+  towbar          Boolean         @default(false)
+
+  // Price
+  price           Int
+  priceType       PriceType       @default(RETAIL)
+  leasingMonthly  Int?
+  leasingAudience LeasingAudience?
+
+  // Listing info
+  title           String
+  description     String
+  licensePlate    String?
+  region          String
+  zipCode         String
+
+  // Timestamps
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  expiresAt       DateTime
+
+  images          ListingImage[]
+  equipment       ListingEquipment[]
+  favorites       Favorite[]
+  messages        Message[]
+  priceHistory    PriceHistory[]
+
+  @@index([make, model])
+  @@index([fuelType])
+  @@index([price])
+  @@index([region])
+  @@index([status])
+  @@index([createdAt])
+  @@index([category])
+  @@index([bodyType])
+  @@index([year])
+  @@index([mileage])
+}
+
+model ListingImage {
+  id        String  @id @default(cuid())
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  url       String
+  sortOrder Int
+}
+
+model ListingEquipment {
+  id        String  @id @default(cuid())
+  listingId String
+  listing   Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  name      String
+  category  String?
+}
+
+model PriceHistory {
+  id        String   @id @default(cuid())
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  price     Int
+  changedAt DateTime @default(now())
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  listingId String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, listingId])
+}
+
+model SavedSearch {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  name        String
+  filters     Json
+  notifyEmail Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model Message {
+  id          String   @id @default(cuid())
+  senderId    String
+  sender      User     @relation("SentMessages", fields: [senderId], references: [id])
+  listingId   String
+  listing     Listing  @relation(fields: [listingId], references: [id])
+  recipientId String
+  content     String
+  read        Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}
+
+model Review {
+  id           String     @id @default(cuid())
+  userId       String
+  user         User       @relation(fields: [userId], references: [id])
+  dealershipId String
+  dealership   Dealership @relation(fields: [dealershipId], references: [id])
+  rating       Int
+  title        String
+  content      String
+  createdAt    DateTime   @default(now())
+}
+
+model ForumCategory {
+  id    String      @id @default(cuid())
+  name  String
+  slug  String      @unique
+  posts ForumPost[]
+}
+
+model ForumPost {
+  id         String        @id @default(cuid())
+  authorId   String
+  categoryId String
+  category   ForumCategory @relation(fields: [categoryId], references: [id])
+  title      String
+  content    String
+  createdAt  DateTime      @default(now())
+  replies    ForumReply[]
+}
+
+model ForumReply {
+  id        String    @id @default(cuid())
+  postId    String
+  post      ForumPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  content   String
+  createdAt DateTime  @default(now())
+}
