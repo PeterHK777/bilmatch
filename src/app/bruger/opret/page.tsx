@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Mail, Lock, User, Phone, Car } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -14,11 +16,23 @@ export default function RegisterPage() {
     acceptTerms: false,
   });
   const [error, setError] = useState("");
+  const router = useRouter();
+  const { register, user } = useAuth();
+
+  // Redirect if already logged in
+  if (user) {
+    router.push("/mine/annoncer");
+    return null;
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name || !form.email || !form.password) {
       setError("Udfyld venligst alle påkrævede felter.");
+      return;
+    }
+    if (form.password.length < 6) {
+      setError("Password skal være mindst 6 tegn.");
       return;
     }
     if (form.password !== form.confirmPassword) {
@@ -29,7 +43,17 @@ export default function RegisterPage() {
       setError("Du skal acceptere brugervilkårene.");
       return;
     }
-    window.location.href = "/mine/annoncer";
+    const result = register({
+      name: form.name,
+      email: form.email,
+      phone: form.phone,
+      password: form.password,
+    });
+    if (result.success) {
+      router.push("/mine/annoncer");
+    } else {
+      setError(result.error || "Der opstod en fejl.");
+    }
   }
 
   return (
@@ -99,7 +123,7 @@ export default function RegisterPage() {
                   type="password"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  placeholder="Mindst 8 tegn"
+                  placeholder="Mindst 6 tegn"
                   className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 text-sm focus:ring-2 focus:ring-primary focus:border-primary"
                 />
               </div>

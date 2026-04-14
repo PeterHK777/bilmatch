@@ -1,54 +1,57 @@
-import { getListingById, getSimilarListings, mockUsers } from "@/lib/mock-data";
-import { formatPrice, formatMileage, formatNumber, timeAgo } from "@/lib/utils";
+"use client";
+
+import { useEffect, useState } from "react";
+import { getAllUserListings } from "@/lib/listings-store";
+import { formatPrice, formatMileage, timeAgo } from "@/lib/utils";
 import { FUEL_TYPE_LABELS, BODY_TYPE_LABELS, TRANSMISSION_LABELS } from "@/lib/constants";
-import { CarCard } from "@/components/ui/CarCard";
 import { ImageGallery } from "./ImageGallery";
-import { ContactSection } from "./ContactSection";
 import { FinancingCalculator } from "./FinancingCalculator";
-import { UserListingDetail } from "./UserListingDetail";
-import { MapPin, Calendar, Gauge, Fuel, Cog, Palette, Users, Hash, Check, ArrowLeft } from "lucide-react";
+import { MapPin, Calendar, Gauge, Fuel, Cog, Check, ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import type { Metadata } from "next";
+import type { MockListing } from "@/lib/mock-data";
 
-interface Props {
-  params: Promise<{ id: string; make: string; model: string }>;
-}
+export function UserListingDetail({ id }: { id: string }) {
+  const [listing, setListing] = useState<MockListing | null>(null);
+  const [notFound, setNotFound] = useState(false);
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { id } = await params;
-  const listing = getListingById(id);
-  if (!listing) return { title: "Annonce ikke fundet" };
-  return {
-    title: `${listing.make} ${listing.model} ${listing.variant || ""} - ${listing.year} | ${formatPrice(listing.price)}`,
-    description: listing.description.slice(0, 160),
-  };
-}
+  useEffect(() => {
+    const all = getAllUserListings();
+    const found = all.find((l) => l.id === id);
+    if (found) {
+      setListing(found);
+    } else {
+      setNotFound(true);
+    }
+  }, [id]);
 
-export default async function ListingDetailPage({ params }: Props) {
-  const { id } = await params;
-  const listing = getListingById(id);
-  if (!listing) return <UserListingDetail id={id} />;
+  if (notFound) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-16 text-center">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Annonce ikke fundet</h1>
+        <p className="text-gray-500 mb-6">Denne annonce findes ikke eller er blevet fjernet.</p>
+        <Link href="/brugt/bil" className="px-6 py-2.5 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition-colors">
+          Søg efter biler
+        </Link>
+      </div>
+    );
+  }
 
-  const seller = mockUsers.find((u) => u.id === listing.userId);
-  const similar = getSimilarListings(listing, 4);
+  if (!listing) return null;
 
   const specs = [
-    { label: "Mærke", value: listing.make, icon: Car },
+    { label: "Mærke", value: listing.make },
     { label: "Model", value: `${listing.model}${listing.variant ? ` ${listing.variant}` : ""}` },
-    { label: "Årgang", value: String(listing.year), icon: Calendar },
-    { label: "Km-stand", value: formatMileage(listing.mileage), icon: Gauge },
-    { label: "Drivmiddel", value: FUEL_TYPE_LABELS[listing.fuelType] || listing.fuelType, icon: Fuel },
-    { label: "Gearkasse", value: TRANSMISSION_LABELS[listing.transmission] || listing.transmission, icon: Cog },
+    { label: "Årgang", value: String(listing.year) },
+    { label: "Km-stand", value: formatMileage(listing.mileage) },
+    { label: "Drivmiddel", value: FUEL_TYPE_LABELS[listing.fuelType] || listing.fuelType },
+    { label: "Gearkasse", value: TRANSMISSION_LABELS[listing.transmission] || listing.transmission },
     { label: "Karosseri", value: BODY_TYPE_LABELS[listing.bodyType] || listing.bodyType },
     { label: "HK", value: `${listing.horsepower} HK` },
-    { label: "Motor", value: listing.engineSize > 0 ? `${listing.engineSize} L` : "Elektrisk" },
     { label: "Døre", value: String(listing.doors) },
-    { label: "Farve", value: listing.color, icon: Palette },
-    { label: "Ejere", value: String(listing.owners), icon: Users },
-    { label: "Trækkrog", value: listing.towbar ? "Ja" : "Nej" },
+    { label: "Farve", value: listing.color },
+    { label: "Ejere", value: String(listing.owners) },
   ];
 
-  // Group equipment by category
   const equipmentByCategory: Record<string, string[]> = {};
   for (const eq of listing.equipment) {
     const cat = eq.category || "Andet";
@@ -58,7 +61,6 @@ export default async function ListingDetailPage({ params }: Props) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
-      {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
         <Link href="/brugt/bil" className="hover:text-primary flex items-center gap-1">
           <ArrowLeft className="w-4 h-4" />
@@ -73,12 +75,9 @@ export default async function ListingDetailPage({ params }: Props) {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Main content */}
         <div className="flex-1 min-w-0">
-          {/* Gallery */}
           <ImageGallery images={listing.images} title={listing.title} />
 
-          {/* Title & Price */}
           <div className="mt-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
@@ -97,7 +96,6 @@ export default async function ListingDetailPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Key specs strip */}
           <div className="mt-6 grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { label: "Årgang", value: String(listing.year), icon: Calendar },
@@ -113,16 +111,12 @@ export default async function ListingDetailPage({ params }: Props) {
             ))}
           </div>
 
-          {/* Specifications */}
           <div className="mt-8">
             <h2 className="text-xl font-bold text-gray-900 mb-4">Specifikationer</h2>
             <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
               <div className="grid grid-cols-1 sm:grid-cols-2">
                 {specs.map((spec, i) => (
-                  <div
-                    key={spec.label}
-                    className={`flex justify-between px-4 py-3 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"} border-b border-gray-100`}
-                  >
+                  <div key={spec.label} className={`flex justify-between px-4 py-3 ${i % 2 === 0 ? "bg-white" : "bg-gray-50"} border-b border-gray-100`}>
                     <span className="text-sm text-gray-600">{spec.label}</span>
                     <span className="text-sm font-medium text-gray-900">{spec.value}</span>
                   </div>
@@ -131,7 +125,6 @@ export default async function ListingDetailPage({ params }: Props) {
             </div>
           </div>
 
-          {/* Equipment */}
           {listing.equipment.length > 0 && (
             <div className="mt-8">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Udstyr</h2>
@@ -153,68 +146,20 @@ export default async function ListingDetailPage({ params }: Props) {
             </div>
           )}
 
-          {/* Description */}
-          <div className="mt-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Beskrivelse</h2>
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{listing.description}</p>
+          {listing.description && (
+            <div className="mt-8">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Beskrivelse</h2>
+              <div className="bg-white rounded-lg border border-gray-200 p-4">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{listing.description}</p>
+              </div>
             </div>
-          </div>
+          )}
 
-          {/* Financing Calculator */}
           <div className="mt-8">
             <FinancingCalculator price={listing.price} />
           </div>
         </div>
-
-        {/* Sidebar - Contact */}
-        <aside className="lg:w-80 shrink-0">
-          <div className="sticky top-20">
-            <ContactSection
-              seller={seller!}
-              listing={listing}
-            />
-          </div>
-        </aside>
       </div>
-
-      {/* Similar Cars */}
-      {similar.length > 0 && (
-        <section className="mt-12">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Lignende biler</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {similar.map((car) => (
-              <CarCard
-                key={car.id}
-                id={car.id}
-                make={car.make}
-                model={car.model}
-                variant={car.variant}
-                year={car.year}
-                mileage={car.mileage}
-                price={car.price}
-                fuelType={car.fuelType}
-                transmission={car.transmission}
-                region={car.region}
-                imageUrl={car.images[0]?.url}
-                packageTier={car.packageTier}
-                dealershipName={car.dealershipName}
-              />
-            ))}
-          </div>
-        </section>
-      )}
     </div>
-  );
-}
-
-function Car(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}>
-      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-      <circle cx="7" cy="17" r="2"/>
-      <path d="M9 17h6"/>
-      <circle cx="17" cy="17" r="2"/>
-    </svg>
   );
 }

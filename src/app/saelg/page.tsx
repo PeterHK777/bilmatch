@@ -1,8 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { CAR_MAKES, FUEL_TYPE_LABELS, BODY_TYPE_LABELS, TRANSMISSION_LABELS, COLORS, EQUIPMENT_LIST, REGIONS } from "@/lib/constants";
-import { Car, Image, FileText, Phone, CreditCard, Check, ArrowLeft, ArrowRight, Upload } from "lucide-react";
+import { Car, Image, FileText, Phone, CreditCard, Check, ArrowLeft, ArrowRight, Upload, LogIn } from "lucide-react";
+import { useAuth } from "@/lib/auth";
+import { createListing } from "@/lib/listings-store";
+import { slugify } from "@/lib/utils";
 
 const steps = [
   { label: "Identifikation", icon: Car },
@@ -15,7 +20,11 @@ const steps = [
 ];
 
 export default function SellPage() {
+  const { user } = useAuth();
+  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(0);
+  const [published, setPublished] = useState(false);
+  const [createdId, setCreatedId] = useState<string | null>(null);
   const [form, setForm] = useState({
     licensePlate: "",
     make: "",
@@ -63,6 +72,79 @@ export default function SellPage() {
 
   function prevStep() {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
+  }
+
+  function handlePublish() {
+    if (!user) return;
+    const listing = createListing(user.id, {
+      make: form.make,
+      model: form.model,
+      variant: form.variant,
+      year: form.year,
+      mileage: form.mileage,
+      fuelType: form.fuelType,
+      transmission: form.transmission,
+      bodyType: form.bodyType,
+      color: form.color,
+      doors: form.doors,
+      horsepower: form.horsepower,
+      engineSize: form.engineSize,
+      owners: form.owners,
+      equipment: form.equipment,
+      title: form.title || `${form.make} ${form.model} - ${form.year}`,
+      description: form.description,
+      price: form.price,
+      region: form.region,
+      zipCode: form.zipCode,
+      packageTier: form.packageTier,
+    });
+    setCreatedId(listing.id);
+    setPublished(true);
+  }
+
+  // Not logged in — show prompt
+  if (!user) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-16 text-center">
+        <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">
+          <LogIn className="w-8 h-8 text-primary" />
+        </div>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Log ind for at sælge din bil</h1>
+        <p className="text-gray-500 mb-6">Du skal have en konto for at oprette annoncer på BilMatch.</p>
+        <div className="flex gap-3 justify-center">
+          <Link href="/bruger/log-ind" className="px-6 py-2.5 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition-colors">
+            Log ind
+          </Link>
+          <Link href="/bruger/opret" className="px-6 py-2.5 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors">
+            Opret bruger
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Published success screen
+  if (published) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-16 text-center">
+        <div className="w-20 h-20 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+          <Check className="w-10 h-10 text-accent" />
+        </div>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Din annonce er oprettet!</h1>
+        <p className="text-gray-500 mb-6">Din bil er nu synlig for tusindvis af potentielle købere.</p>
+        <div className="flex gap-3 justify-center">
+          <Link href="/mine/annoncer" className="px-6 py-2.5 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition-colors">
+            Se mine annoncer
+          </Link>
+          <Link
+            href={`/brugt/bil/${slugify(form.make)}/${slugify(form.model)}/${createdId}`}
+            className="px-6 py-2.5 border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50 transition-colors"
+          >
+            Se annoncen
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -128,7 +210,7 @@ export default function SellPage() {
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Mærke *</label>
-                  <select value={form.make} onChange={(e) => updateForm("make", e.target.value)} className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-primary">
+                  <select value={form.make} onChange={(e) => { updateForm("make", e.target.value); setForm(f => ({ ...f, make: e.target.value, model: "" })); }} className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-primary">
                     <option value="">Vælg mærke</option>
                     {Object.keys(CAR_MAKES).sort().map((m) => <option key={m} value={m}>{m}</option>)}
                   </select>
@@ -246,6 +328,7 @@ export default function SellPage() {
               <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
               <p className="text-gray-600 font-medium">Træk billeder hertil eller klik for at uploade</p>
               <p className="text-sm text-gray-400 mt-1">Upload op til 30 billeder (JPG, PNG, max 10 MB pr. billede)</p>
+              <p className="text-xs text-gray-400 mt-2">(Demo: Billeder tilføjes automatisk baseret på biltype)</p>
               <input type="file" className="hidden" multiple accept="image/*" />
             </div>
             <p className="text-xs text-gray-400">Tip: Det første billede bliver forsidebilledet. Tag billeder i godt lys og vis bilen fra alle vinkler.</p>
@@ -300,12 +383,13 @@ export default function SellPage() {
         {currentStep === 4 && (
           <div className="space-y-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Kontaktinformation</h2>
+            <p className="text-sm text-gray-500 -mt-2">Dine kontaktoplysninger fra din profil bruges automatisk.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Telefonnummer *</label>
                 <input
                   type="tel"
-                  value={form.phone}
+                  value={form.phone || user?.phone || ""}
                   onChange={(e) => updateForm("phone", e.target.value)}
                   placeholder="+45 12 34 56 78"
                   className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary"
@@ -315,7 +399,7 @@ export default function SellPage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email *</label>
                 <input
                   type="email"
-                  value={form.email}
+                  value={form.email || user?.email || ""}
                   onChange={(e) => updateForm("email", e.target.value)}
                   placeholder="din@email.dk"
                   className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm focus:ring-2 focus:ring-primary"
@@ -384,7 +468,10 @@ export default function SellPage() {
               <p className="text-sm"><strong>Pris:</strong> {form.price ? `${parseInt(form.price).toLocaleString("da-DK")} kr.` : "Ikke angivet"}</p>
               <p className="text-sm"><strong>Pakke:</strong> {form.packageTier}</p>
             </div>
-            <button className="px-8 py-3 bg-accent text-white font-semibold rounded-lg hover:bg-accent-dark transition-colors text-lg">
+            <button
+              onClick={handlePublish}
+              className="px-8 py-3 bg-accent text-white font-semibold rounded-lg hover:bg-accent-dark transition-colors text-lg"
+            >
               Publicer annonce
             </button>
           </div>

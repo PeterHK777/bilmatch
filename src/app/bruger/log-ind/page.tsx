@@ -2,13 +2,23 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, Car } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const router = useRouter();
+  const { login, user } = useAuth();
+
+  // Redirect if already logged in
+  if (user) {
+    router.push("/mine/annoncer");
+    return null;
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -16,8 +26,12 @@ export default function LoginPage() {
       setError("Udfyld venligst alle felter.");
       return;
     }
-    // Demo: just redirect
-    window.location.href = "/mine/annoncer";
+    const result = login(email, password);
+    if (result.success) {
+      router.push("/mine/annoncer");
+    } else {
+      setError(result.error || "Der opstod en fejl.");
+    }
   }
 
   return (

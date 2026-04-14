@@ -1,15 +1,59 @@
-import { mockListings } from "@/lib/mock-data";
-import { formatPrice, formatMileage, timeAgo } from "@/lib/utils";
+"use client";
+
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Plus, Edit, Trash2, RefreshCw, CheckCircle, Eye } from "lucide-react";
+import { Plus, Edit, Trash2, CheckCircle, Eye, LogIn } from "lucide-react";
+import { formatPrice, formatMileage, timeAgo, slugify } from "@/lib/utils";
+import { useAuth } from "@/lib/auth";
+import { getUserListings, deleteListing, markListingAsSold } from "@/lib/listings-store";
+import type { MockListing } from "@/lib/mock-data";
 
 export default function MyListingsPage() {
-  // Demo: show first user's listings
-  const userListings = mockListings.filter((l) => l.userId === "user-1").slice(0, 8);
-  const active = userListings.filter((l) => l.status === "ACTIVE");
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  const [listings, setListings] = useState<MockListing[]>([]);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/bruger/log-ind");
+    }
+    if (user) {
+      setListings(getUserListings(user.id));
+    }
+  }, [user, loading, router]);
+
+  function handleDelete(id: string) {
+    deleteListing(id);
+    setListings((prev) => prev.filter((l) => l.id !== id));
+  }
+
+  function handleMarkSold(id: string) {
+    markListingAsSold(id);
+    setListings((prev) => prev.map((l) => l.id === id ? { ...l, status: "SOLD" } : l));
+  }
+
+  if (loading) return null;
+
+  if (!user) {
+    return (
+      <div className="max-w-lg mx-auto px-4 py-16 text-center">
+        <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">
+          <LogIn className="w-8 h-8 text-primary" />
+        </div>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Log ind for at se dine annoncer</h1>
+        <p className="text-gray-500 mb-6">Du skal logge ind for at administrere dine bilannoncer.</p>
+        <Link href="/bruger/log-ind" className="px-6 py-2.5 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition-colors">
+          Log ind
+        </Link>
+      </div>
+    );
+  }
+
+  const active = listings.filter((l) => l.status === "ACTIVE");
 
   return (
-    <div>
+    <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Mine annoncer</h1>
@@ -24,7 +68,7 @@ export default function MyListingsPage() {
         </Link>
       </div>
 
-      {userListings.length === 0 ? (
+      {listings.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
           <p className="text-gray-500 mb-4">Du har ingen annoncer endnu.</p>
           <Link
@@ -37,7 +81,7 @@ export default function MyListingsPage() {
         </div>
       ) : (
         <div className="space-y-3">
-          {userListings.map((listing) => (
+          {listings.map((listing) => (
             <div
               key={listing.id}
               className="bg-white rounded-lg border border-gray-200 p-4 flex flex-col sm:flex-row gap-4"
@@ -72,23 +116,26 @@ export default function MyListingsPage() {
                   </span>
                 </div>
                 <div className="flex flex-wrap gap-2 mt-3">
-                  <button className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">
+                  <Link
+                    href={`/brugt/bil/${slugify(listing.make)}/${slugify(listing.model)}/${listing.id}`}
+                    className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600"
+                  >
                     <Eye className="w-3.5 h-3.5" />
                     Se annonce
-                  </button>
-                  <button className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">
-                    <Edit className="w-3.5 h-3.5" />
-                    Rediger
-                  </button>
-                  <button className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    Marker som solgt
-                  </button>
-                  <button className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600">
-                    <RefreshCw className="w-3.5 h-3.5" />
-                    Forny
-                  </button>
-                  <button className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-red-200 rounded-lg hover:bg-red-50 text-red-600">
+                  </Link>
+                  {listing.status === "ACTIVE" && (
+                    <button
+                      onClick={() => handleMarkSold(listing.id)}
+                      className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-gray-300 rounded-lg hover:bg-gray-50 text-gray-600"
+                    >
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      Marker som solgt
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleDelete(listing.id)}
+                    className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium border border-red-200 rounded-lg hover:bg-red-50 text-red-600"
+                  >
                     <Trash2 className="w-3.5 h-3.5" />
                     Slet
                   </button>
