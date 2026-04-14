@@ -2,12 +2,13 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { CarCard } from "@/components/ui/CarCard";
-import { LayoutGrid, List, ChevronLeft, ChevronRight } from "lucide-react";
+import { LayoutGrid, List, ChevronLeft, ChevronRight, Bookmark, Check } from "lucide-react";
 import { useState, useEffect } from "react";
 import type { MockListing } from "@/lib/mock-data";
 import { getAllUserListings } from "@/lib/listings-store";
+import { saveSearch } from "@/lib/saved-searches-store";
 import { formatPrice, formatMileage } from "@/lib/utils";
-import { FUEL_TYPE_LABELS, TRANSMISSION_LABELS, LISTINGS_PER_PAGE } from "@/lib/constants";
+import { FUEL_TYPE_LABELS, TRANSMISSION_LABELS, LISTINGS_PER_PAGE, CAR_MAKES } from "@/lib/constants";
 import Link from "next/link";
 import { slugify } from "@/lib/utils";
 
@@ -40,6 +41,7 @@ export function SearchResults({ listings: serverListings, total: serverTotal, cu
   const searchParams = useSearchParams();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [userListings, setUserListings] = useState<MockListing[]>([]);
+  const [searchSaved, setSearchSaved] = useState(false);
 
   useEffect(() => {
     const all = getAllUserListings();
@@ -68,6 +70,25 @@ export function SearchResults({ listings: serverListings, total: serverTotal, cu
     router.push(`/brugt/bil?${params.toString()}`);
   }
 
+  function handleSaveSearch() {
+    const filters = searchParams.toString();
+    const parts: string[] = [];
+    const make = searchParams.get("make");
+    const model = searchParams.get("model");
+    const fuelType = searchParams.get("fuelType");
+    const region = searchParams.get("region");
+    const priceTo = searchParams.get("priceTo");
+    if (make) parts.push(make);
+    if (model) parts.push(model);
+    if (fuelType) parts.push(FUEL_TYPE_LABELS[fuelType] || fuelType);
+    if (region) parts.push(region);
+    if (priceTo) parts.push(`under ${parseInt(priceTo).toLocaleString("da-DK")} kr`);
+    const name = parts.length > 0 ? parts.join(" - ") : "Alle biler";
+    saveSearch(name, filters);
+    setSearchSaved(true);
+    setTimeout(() => setSearchSaved(false), 3000);
+  }
+
   return (
     <div>
       {/* Sort & View Toggle */}
@@ -87,7 +108,19 @@ export function SearchResults({ listings: serverListings, total: serverTotal, cu
           </select>
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleSaveSearch}
+            className={`flex items-center gap-1 px-2.5 py-1.5 text-xs font-medium rounded-lg border transition-colors ${
+              searchSaved
+                ? "bg-accent/10 border-accent text-accent"
+                : "border-gray-300 text-gray-600 hover:bg-gray-50"
+            }`}
+          >
+            {searchSaved ? <Check className="w-3.5 h-3.5" /> : <Bookmark className="w-3.5 h-3.5" />}
+            {searchSaved ? "Gemt!" : "Gem søgning"}
+          </button>
+          <div className="w-px h-5 bg-gray-200" />
           <button
             onClick={() => setViewMode("grid")}
             className={`p-1.5 rounded ${viewMode === "grid" ? "bg-primary text-white" : "text-gray-400 hover:text-gray-600"}`}

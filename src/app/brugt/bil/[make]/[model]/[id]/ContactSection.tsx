@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Phone, Mail, MessageCircle, Heart, Share2, Flag, MapPin, Building2, User } from "lucide-react";
 import type { MockUser, MockListing } from "@/lib/mock-data";
+import { isFavorite, toggleFavorite } from "@/lib/favorites-store";
+import { sendMessage } from "@/lib/messages-store";
 
 interface Props {
   seller: MockUser;
@@ -13,12 +15,28 @@ export function ContactSection({ seller, listing }: Props) {
   const [showPhone, setShowPhone] = useState(false);
   const [messageText, setMessageText] = useState("");
   const [messageSent, setMessageSent] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
+  const [fav, setFav] = useState(false);
 
   const isDealer = seller.role === "DEALER";
 
+  useEffect(() => {
+    setFav(isFavorite(listing.id));
+  }, [listing.id]);
+
+  function handleToggleFavorite() {
+    const newState = toggleFavorite(listing.id);
+    setFav(newState);
+  }
+
   function handleSendMessage() {
     if (!messageText.trim()) return;
+    sendMessage(
+      seller.id,
+      isDealer ? seller.dealership!.companyName : seller.name,
+      listing.id,
+      listing.title,
+      messageText.trim()
+    );
     setMessageSent(true);
     setMessageText("");
   }
@@ -82,7 +100,7 @@ export function ContactSection({ seller, listing }: Props) {
         {messageSent ? (
           <div className="text-center py-4">
             <p className="text-accent font-medium">Besked sendt!</p>
-            <p className="text-sm text-gray-500 mt-1">Sælger vender tilbage hurtigst muligt.</p>
+            <p className="text-sm text-gray-500 mt-1">Beskeden er gemt under dine beskeder.</p>
             <button
               onClick={() => setMessageSent(false)}
               className="text-sm text-primary hover:underline mt-2"
@@ -112,15 +130,15 @@ export function ContactSection({ seller, listing }: Props) {
       {/* Actions */}
       <div className="flex gap-2">
         <button
-          onClick={() => setIsFavorite(!isFavorite)}
+          onClick={handleToggleFavorite}
           className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border text-sm font-medium transition-colors ${
-            isFavorite
+            fav
               ? "bg-red-50 border-red-200 text-red-600"
               : "border-gray-300 text-gray-600 hover:bg-gray-50"
           }`}
         >
-          <Heart className={`w-4 h-4 ${isFavorite ? "fill-current" : ""}`} />
-          {isFavorite ? "Gemt" : "Gem"}
+          <Heart className={`w-4 h-4 ${fav ? "fill-current" : ""}`} />
+          {fav ? "Gemt" : "Gem"}
         </button>
         <button className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-50 text-sm font-medium transition-colors">
           <Share2 className="w-4 h-4" />

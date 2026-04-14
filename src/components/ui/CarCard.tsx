@@ -1,9 +1,11 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Heart, MapPin, Fuel, Gauge, Calendar } from "lucide-react";
 import { formatPrice, formatMileage, slugify, cn, getImagePlaceholder } from "@/lib/utils";
 import { FUEL_TYPE_LABELS, TRANSMISSION_LABELS } from "@/lib/constants";
+import { isFavorite, toggleFavorite } from "@/lib/favorites-store";
 
 interface CarCardProps {
   id: string;
@@ -41,6 +43,18 @@ export function CarCard({
   const href = `/brugt/bil/${slugify(make)}/${slugify(model)}/${id}`;
   const isPremium = packageTier === "PREMIUM";
   const isPlus = packageTier === "PLUS";
+  const [fav, setFav] = useState(false);
+
+  useEffect(() => {
+    setFav(isFavorite(id));
+  }, [id]);
+
+  function handleToggleFavorite(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    const newState = toggleFavorite(id);
+    setFav(newState);
+  }
 
   return (
     <Link
@@ -70,13 +84,13 @@ export function CarCard({
           </span>
         )}
         <button
-          onClick={(e) => {
-            e.preventDefault();
-            // Toggle favorite
-          }}
-          className="absolute top-2 right-2 p-1.5 bg-white/90 rounded-full hover:bg-white transition-colors"
+          onClick={handleToggleFavorite}
+          className={cn(
+            "absolute top-2 right-2 p-1.5 rounded-full transition-colors",
+            fav ? "bg-red-50 text-red-500" : "bg-white/90 hover:bg-white text-gray-500 hover:text-red-500"
+          )}
         >
-          <Heart className="w-4 h-4 text-gray-500 hover:text-red-500" />
+          <Heart className={cn("w-4 h-4", fav && "fill-current")} />
         </button>
       </div>
 
