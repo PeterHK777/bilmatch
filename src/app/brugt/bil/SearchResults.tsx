@@ -3,8 +3,9 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { CarCard } from "@/components/ui/CarCard";
 import { LayoutGrid, List, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { MockListing } from "@/lib/mock-data";
+import { getAllUserListings } from "@/lib/listings-store";
 import { formatPrice, formatMileage } from "@/lib/utils";
 import { FUEL_TYPE_LABELS, TRANSMISSION_LABELS, LISTINGS_PER_PAGE } from "@/lib/constants";
 import Link from "next/link";
@@ -17,10 +18,41 @@ interface Props {
   currentSort: string;
 }
 
-export function SearchResults({ listings, total, currentPage, currentSort }: Props) {
+function filterUserListings(all: MockListing[], params: URLSearchParams): MockListing[] {
+  let filtered = all.filter((l) => l.status === "ACTIVE");
+  const get = (key: string) => params.get(key) || undefined;
+  if (get("make")) filtered = filtered.filter((l) => l.make === get("make"));
+  if (get("model")) filtered = filtered.filter((l) => l.model === get("model"));
+  if (get("fuelType")) filtered = filtered.filter((l) => l.fuelType === get("fuelType"));
+  if (get("bodyType")) filtered = filtered.filter((l) => l.bodyType === get("bodyType"));
+  if (get("transmission")) filtered = filtered.filter((l) => l.transmission === get("transmission"));
+  if (get("color")) filtered = filtered.filter((l) => l.color === get("color"));
+  if (get("region")) filtered = filtered.filter((l) => l.region === get("region"));
+  if (get("yearFrom")) filtered = filtered.filter((l) => l.year >= parseInt(get("yearFrom")!));
+  if (get("yearTo")) filtered = filtered.filter((l) => l.year <= parseInt(get("yearTo")!));
+  if (get("priceFrom")) filtered = filtered.filter((l) => l.price >= parseInt(get("priceFrom")!));
+  if (get("priceTo")) filtered = filtered.filter((l) => l.price <= parseInt(get("priceTo")!));
+  return filtered;
+}
+
+export function SearchResults({ listings: serverListings, total: serverTotal, currentPage, currentSort }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [userListings, setUserListings] = useState<MockListing[]>([]);
+
+  useEffect(() => {
+    const all = getAllUserListings();
+    if (all.length > 0) {
+      setUserListings(filterUserListings(all, searchParams));
+    }
+  }, [searchParams]);
+
+  // Merge user listings at the top of results on page 1
+  const mergedListings = currentPage === 1
+    ? [...userListings, ...serverListings]
+    : serverListings;
+  const total = serverTotal + userListings.length;
   const totalPages = Math.ceil(total / LISTINGS_PER_PAGE);
 
   function handleSort(sort: string) {
@@ -72,14 +104,14 @@ export function SearchResults({ listings, total, currentPage, currentSort }: Pro
       </div>
 
       {/* Results */}
-      {listings.length === 0 ? (
+      {mergedListings.length === 0 ? (
         <div className="text-center py-16">
           <p className="text-gray-500 text-lg">Ingen biler fundet med de valgte filtre.</p>
           <p className="text-gray-400 text-sm mt-2">Prøv at justere dine filtre for at se flere resultater.</p>
         </div>
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {listings.map((car) => (
+          {mergedListings.map((car) => (
             <CarCard
               key={car.id}
               id={car.id}
@@ -100,7 +132,7 @@ export function SearchResults({ listings, total, currentPage, currentSort }: Pro
         </div>
       ) : (
         <div className="space-y-3">
-          {listings.map((car) => (
+          {mergedListings.map((car) => (
             <Link
               key={car.id}
               href={`/brugt/bil/${slugify(car.make)}/${slugify(car.model)}/${car.id}`}
