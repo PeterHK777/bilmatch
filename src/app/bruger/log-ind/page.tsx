@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Mail, Lock, Eye, EyeOff, Car } from "lucide-react";
@@ -15,10 +15,11 @@ export default function LoginPage() {
   const { login, user } = useAuth();
 
   // Redirect if already logged in
-  if (user) {
-    router.push("/mine/annoncer");
-    return null;
-  }
+  useEffect(() => {
+    if (user) router.push("/mine/annoncer");
+  }, [user, router]);
+
+  if (user) return null;
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

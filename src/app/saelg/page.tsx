@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { CAR_MAKES, FUEL_TYPE_LABELS, BODY_TYPE_LABELS, TRANSMISSION_LABELS, COLORS, EQUIPMENT_LIST, REGIONS } from "@/lib/constants";
-import { Car, Image, FileText, Phone, CreditCard, Check, ArrowLeft, ArrowRight, Upload, LogIn } from "lucide-react";
+import { Car, Image, FileText, Phone, CreditCard, Check, ArrowLeft, ArrowRight, Upload, LogIn, X } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { createListing } from "@/lib/listings-store";
 import { slugify } from "@/lib/utils";
@@ -25,6 +25,8 @@ export default function SellPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [published, setPublished] = useState(false);
   const [createdId, setCreatedId] = useState<string | null>(null);
+  const [uploadedImages, setUploadedImages] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [form, setForm] = useState({
     licensePlate: "",
     make: "",
@@ -74,6 +76,25 @@ export default function SellPage() {
     if (currentStep > 0) setCurrentStep(currentStep - 1);
   }
 
+  function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files;
+    if (!files) return;
+    Array.from(files).forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        if (ev.target?.result) {
+          setUploadedImages((prev) => [...prev, ev.target!.result as string]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+    e.target.value = "";
+  }
+
+  function removeImage(index: number) {
+    setUploadedImages((prev) => prev.filter((_, i) => i !== index));
+  }
+
   function handlePublish() {
     if (!user) return;
     const listing = createListing(user.id, {
@@ -97,6 +118,7 @@ export default function SellPage() {
       region: form.region,
       zipCode: form.zipCode,
       packageTier: form.packageTier,
+      uploadedImages,
     });
     setCreatedId(listing.id);
     setPublished(true);
@@ -324,13 +346,44 @@ export default function SellPage() {
         {currentStep === 2 && (
           <div className="space-y-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Upload billeder</h2>
-            <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-primary transition-colors cursor-pointer">
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-primary transition-colors cursor-pointer"
+            >
               <Upload className="w-12 h-12 mx-auto text-gray-400 mb-4" />
               <p className="text-gray-600 font-medium">Træk billeder hertil eller klik for at uploade</p>
               <p className="text-sm text-gray-400 mt-1">Upload op til 30 billeder (JPG, PNG, max 10 MB pr. billede)</p>
-              <p className="text-xs text-gray-400 mt-2">(Demo: Billeder tilføjes automatisk baseret på biltype)</p>
-              <input type="file" className="hidden" multiple accept="image/*" />
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                multiple
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
             </div>
+            {uploadedImages.length > 0 && (
+              <div>
+                <p className="text-sm font-medium text-gray-700 mb-2">{uploadedImages.length} billede{uploadedImages.length !== 1 ? "r" : ""} uploadet</p>
+                <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+                  {uploadedImages.map((src, i) => (
+                    <div key={i} className="relative group aspect-[4/3] rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                      <img src={src} alt={`Billede ${i + 1}`} className="w-full h-full object-cover" />
+                      {i === 0 && (
+                        <span className="absolute top-1 left-1 bg-primary text-white text-[10px] px-1.5 py-0.5 rounded font-medium">Forsidebillede</span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); removeImage(i); }}
+                        className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             <p className="text-xs text-gray-400">Tip: Det første billede bliver forsidebilledet. Tag billeder i godt lys og vis bilen fra alle vinkler.</p>
           </div>
         )}

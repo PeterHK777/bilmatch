@@ -25,6 +25,7 @@ export interface CreateListingData {
   region: string;
   zipCode: string;
   packageTier: string;
+  uploadedImages?: string[];
 }
 
 // Car images mapped by body type
@@ -62,7 +63,16 @@ export function getAllUserListings(): MockListing[] {
 export function createListing(userId: string, data: CreateListingData): MockListing {
   const id = "listing-u-" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const bodyType = data.bodyType || "SEDAN";
-  const image = carImageMap[bodyType] || "/cars/sedan-blue.svg";
+  const fallbackImage = carImageMap[bodyType] || "/cars/sedan-blue.svg";
+
+  // Use uploaded images if available, otherwise fall back to SVG placeholders
+  const images = data.uploadedImages && data.uploadedImages.length > 0
+    ? data.uploadedImages.map((url, i) => ({ url, sortOrder: i }))
+    : [
+        { url: fallbackImage, sortOrder: 0 },
+        { url: "/cars/sedan-dark.svg", sortOrder: 1 },
+        { url: "/cars/sedan-light.svg", sortOrder: 2 },
+      ];
 
   const listing: MockListing = {
     id,
@@ -90,11 +100,7 @@ export function createListing(userId: string, data: CreateListingData): MockList
     status: "ACTIVE",
     packageTier: data.packageTier || "BASIS",
     createdAt: new Date().toISOString(),
-    images: [
-      { url: image, sortOrder: 0 },
-      { url: "/cars/sedan-dark.svg", sortOrder: 1 },
-      { url: "/cars/sedan-light.svg", sortOrder: 2 },
-    ],
+    images,
     equipment: data.equipment.map((name) => ({ name, category: "Andet" })),
     dealershipName: null,
     dealershipId: null,
